@@ -1,0 +1,86 @@
+ARG FEDORA_VERSION=39
+
+FROM registry.fedoraproject.org/fedora:${FEDORA_VERSION}
+
+ARG ROS_DISTRO=humble
+ARG ROS_VARIANT=desktop_full
+
+ENV LANG=en_US.UTF-8
+ENV RPM_ARCH=x86_64
+ENV ROS_PYTHON_VERSION=3
+ENV ROS_DISTRO=${ROS_DISTRO}
+ENV ROS_HOME=/opt/ros/${ROS_DISTRO}
+ENV ROS_VARIANT=${ROS_VARIANT}
+
+RUN dnf install -y \
+  passwd \
+  cmake \
+  cppcheck \
+  eigen3-devel \
+  gcc-c++ \
+  gcc-gfortran \
+  liblsan \
+  libXaw-devel \
+  libyaml-devel \
+  make \
+  opencv-devel \
+  patch \
+  python3-colcon-common-extensions \
+  python3-coverage \
+  python3-devel \
+  python3-empy \
+  python3-nose \
+  python3-pip \
+  python3-pydocstyle \
+  python3-pyparsing \
+  python3-pytest \
+  python3-pytest-cov \
+  python3-pytest-mock \
+  python3-pytest-runner \
+  python3-rosdep \
+  python3-setuptools \
+  python3-vcstool \
+  poco-devel \
+  poco-foundation \
+  python3-flake8 \
+  python3-flake8-import-order \
+  redhat-rpm-config \
+  uncrustify \
+  wget \
+  python3-rosinstall_generator \
+  yaml-cpp-devel
+
+RUN python3 -m pip install \
+    flake8-blind-except==0.1.1 \
+    flake8-class-newline \
+    flake8-deprecated
+
+RUN mkdir -p ${ROS_HOME}/src
+
+RUN vcs import --input https://raw.githubusercontent.com/ros2/ros2/${ROS_DISTRO}/ros2.repos ${ROS_HOME}/src
+
+RUN rosdep init && \
+rosdep update && \
+rosdep install --from-paths ${ROS_HOME} --ignore-src -y --skip-keys "fastcdr ignition-cmake2 ignition-math6 rti-connext-dds-6.0.1 urdfdom_headers"
+
+WORKDIR ${ROS_HOME}
+
+RUN touch ${ROS_HOME}/src/ros-visualization/rqt/rqt_gui_cpp/CATKIN_IGNORE
+RUN touch ${ROS_HOME}/src/ros-visualization/qt_gui_core/qt_gui_core/CATKIN_IGNORE
+RUN touch ${ROS_HOME}/src/ros-visualization/qt_gui_core/qt_gui_cpp/CATKIN_IGNORE
+
+RUN sed -i '1s/^/#include <stdint.h> /' ${ROS_HOME}/src/ros2/rcpputils/include/rcpputils/filesystem_helper.hpp
+RUN sed -i '1s/^/#include <stdint.h> /' ${ROS_HOME}/src/ros-tooling/libstatistics_collector/include/libstatistics_collector/moving_average_statistics/types.hpp
+RUN sed -i '1s/^/#include <stdexcept> /' ${ROS_HOME}/src/ros2/rclcpp/rclcpp/include/rclcpp/context.hpp
+RUN sed -i '1s/^/#include <stdexcept> /' ${ROS_HOME}/src/ros2/rclcpp/rclcpp/src/rclcpp/logging_mutex.cpp
+RUN sed -i '1s/^/#include <stdint.h> /'  ${ROS_HOME}/src/ros2/rosbag2/rosbag2_compression/include/rosbag2_compression/compression_options.hpp
+
+RUN touch ${ROS_HOME}/src/ros2/demos/image_tools/CATKIN_IGNORE
+RUN touch src/ros2/demos/intra_process_demo/CATKIN_IGNORE
+
+RUN rm -rf ${ROS_HOME}/src/ros2/rviz && \
+git clone -b ${ROS_DISTRO} https://github.com/ros2/rviz.git ${ROS_HOME}/src/ros2/rviz
+
+RUN colcon build --symlink-install
+
+
