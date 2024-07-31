@@ -1,0 +1,11 @@
+[Unit]
+Description="Rail Horizon position spoofing service"
+
+[Service]
+EnvironmentFile=/etc/environment
+Environment="HOME=/root"
+ExecStart=/bin/bash -c "/opt/rail-horizon-oss/scripts/runLocalization.sh"
+WorkingDirectory=/opt/rail-horizon-oss
+
+[Install]
+WantedBy=multi-user.target

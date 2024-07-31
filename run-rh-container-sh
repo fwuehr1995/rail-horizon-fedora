@@ -1,0 +1,14 @@
+#!/usr/bin/bash -x
+
+podman run \
+    --rm \
+    --security-opt label=disable \
+    --device=/dev/dri/card1:/dev/dri/card1 \
+    --device=/dev/dri/renderD128:/dev/dri/renderD128 \
+    --env WAYLAND_DISPLAY=$WAYLAND_DISPLAY \
+    --env XDG_SESSION_TYPE=wayland \
+    --env XDG_RUNTIME_DIR=/tmp \
+    --env QT_QPA_PLATFORM=wayland \
+    -v "$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY:/tmp/$WAYLAND_DISPLAY:ro" \
+    -it \
+    rail-horizon-centos-stream-9:latest

@@ -1,0 +1,41 @@
+From 83c9c62514b2c72e8aa41d2726b5fc97771d5794 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Florian=20W=C3=BChr?= <fwuehr@redhat.com>
+Date: Wed, 31 Jul 2024 15:56:31 +0200
+Subject: [PATCH] =?UTF-8?q?Resolve=20compile=20issues=20with=20gcc-13+=20S?=
+ =?UTF-8?q?igned-off-by:=20Florian=20W=C3=BChr=20<fwuehr@redhat.com>?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+---
+ dbs-map-api/include/dbs-map-api/CommonTypes.h          | 1 +
+ dbs-map-api/include/dbs-map-api/download/model/Layer.h | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/dbs-map-api/include/dbs-map-api/CommonTypes.h b/dbs-map-api/include/dbs-map-api/CommonTypes.h
+index 2746125..c5f4cd9 100644
+--- a/dbs-map-api/include/dbs-map-api/CommonTypes.h
++++ b/dbs-map-api/include/dbs-map-api/CommonTypes.h
+@@ -14,6 +14,7 @@
+ #include <string>
+ #include <memory>
+ #include <vector>
++#include <cstdint>
+ 
+ namespace dbs_map
+ {
+diff --git a/dbs-map-api/include/dbs-map-api/download/model/Layer.h b/dbs-map-api/include/dbs-map-api/download/model/Layer.h
+index 112138b..88e8c06 100644
+--- a/dbs-map-api/include/dbs-map-api/download/model/Layer.h
++++ b/dbs-map-api/include/dbs-map-api/download/model/Layer.h
+@@ -6,6 +6,7 @@
+ #pragma once
+ #include <vector>
+ #include <string>
++#include <cstdint>
+ 
+ namespace dbs_map
+ {
+-- 
+2.45.2
+
