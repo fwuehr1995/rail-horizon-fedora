@@ -68,13 +68,14 @@ RUN echo "DB_MAP_VERSION=${DB_MAP_VERSION}" >> /etc/environment
 RUN echo "DB_MAP_ENDPOINT=${DB_MAP_ENDPOINT}" >> /etc/environment
 RUN echo "DB_MAP_CATALOG=${DB_MAP_CATALOG}" >> /etc/environment
 
-
 #build rail horizon
 RUN cd /opt/rail-horizon-oss && \
-source /opt/ros/${ROS2_DISTRO}/install/setup.bash && \
+source /opt/ros/${ROS2_DISTRO}/setup.bash && \
 colcon build --base-paths src \ 
 --cmake-args -DCMAKE_BUILD_TYPE=Debug -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 --event-handlers console_cohesion+ --packages-up-to dsd_rail_horizon
+
+WORKDIR /opt/rail-horizon-oss
 
 ADD rail-horizon.service /lib/systemd/system
 ADD rail-horizon-position-spoofing.service /lib/systemd/system
